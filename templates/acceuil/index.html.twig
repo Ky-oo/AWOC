@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AWOK{% endblock %}
+
+{% block body %}
+    <h1 class="animate-charcter"><center>AWOK</center></h1>
+
+    <div class="container mt-5">
+        <div class="jumbotron">
+            <p class="lead">Le site pour les étudiants en BTS SIO de Gabriel Fauré.</p>
+            <hr class="my-4">
+            <p>Découvrez la possibilité de créer un poste par jour avec une image, un titre et un texte captivant.</p>
+
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <a class="btn btn-primary btn-lg" href="/post" role="button">Voir les posts du jour !</a>
+            {% else %}
+                    <a class="btn btn-primary btn-lg" href="/login" role="button">Commencons par se connecter</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Avis des élèves -->
+    <div class="container">
+        <h2 class="text-center mb-4">Avis des élèves</h2>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Kylian Patry</h5>
+                        <p class="card-text">AWOK est un outil incroyable pour partager nos idées et nos projets. Je l'adore !</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Anas Bensmatef</h5>
+                        <p class="card-text">AWOK a grandement simplifié la publication de mes travaux. C'est génial pour les étudiants.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Hamlaoui Inzoudine</h5>
+                        <p class="card-text">Grâce à AWOK, je peux partager mes projets avec mes camarades de classe de manière simple et efficace.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Dimitri Dechamps</h5>
+                        <p class="card-text">AWOK est un excellent moyen de créer un portfolio en ligne et de montrer notre travail.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Yana Lombard</h5>
+                        <p class="card-text">Je recommande vivement AWOK à tous les étudiants en BTS SIO. C'est très utile pour nous.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Aurélien Blanchet</h5>
+                        <p class="card-text">AWOK nous permet de partager nos projets de manière créative et professionnelle. J'adore ça !</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .animate-charcter
+        {
+            text-transform: uppercase;
+            background-image: linear-gradient(
+                    -225deg,
+                    #231557 0%,
+                    #44107a 29%,
+                    #ff1361 67%,
+                    #fff800 100%
+            );
+            background-size: auto auto;
+            background-clip: border-box;
+            background-size: 200% auto;
+            color: #fff;
+            background-clip: text;
+            text-fill-color: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textclip 2s linear infinite;
+            display: inline-block;
+            font-size: 190px;
+        }
+
+        .jumbotron{
+            color: #ffffff;
+        }
+
+        @keyframes textclip {
+            to {
+                background-position: 200% center;
+            }
+        }</style>
+
+{% endblock %}

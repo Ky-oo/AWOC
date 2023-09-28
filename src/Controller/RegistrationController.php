@@ -21,6 +21,8 @@ class RegistrationController extends AbstractController
         $user->setEmail("supAdmin@awok.fr");
         $plaintextPassword = "AwokSupAdmin2023";
         $user->setRoles( [ "ROLE_SUPER_ADMIN" ]);
+        $user->setNom('Patry');
+        $user->setPrenom('Kylian');
 
         $hashedPassword = $passwordHasher->hashPassword(
             $user,

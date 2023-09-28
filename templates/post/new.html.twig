@@ -4,8 +4,12 @@
 
 {% block body %}
     <h1>Create new Post</h1>
-
+<div class="card shadow" style="width: 18rem;">
     {{ include('post/_form.html.twig') }}
+
+    </div>
+
+
 
     <a href="{{ path('app_post_index') }}">back to list</a>
 {% endblock %}

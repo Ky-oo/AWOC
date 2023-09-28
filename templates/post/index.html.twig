@@ -3,39 +3,70 @@
 {% block title %}Post index{% endblock %}
 
 {% block body %}
-    <h1>Post index</h1>
+    <h1 class="animate-charcter"><center>Post index</center></h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Text</th>
-                <th>Autor</th>
-                <th>DateTime</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for post in posts %}
-            <tr>
-                <td>{{ post.id }}</td>
-                <td>{{ post.title }}</td>
-                <td>{{ post.text }}</td>
-                <td>{{ post.user["email"] }}</td>
-                <td>{{ post.dateTime ? post.dateTime|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_post_show', {'id': post.id}) }}">show</a>
-                    <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="container text-left">
+        <div class="row">
+            {% for post in posts %}
+                <div class="col-md-4">
+                    <div class="card shadow" style="width: 18rem;">
+                        <p>{{ post.dateTime ? post.dateTime|date('m-d H:i') : '' }}</p>
 
-    <a href="{{ path('app_post_new') }}">Create new</a>
+                        <center><h5 class="card-title">{{ post.title }}</h5></center>
+                        <img src="{{ vich_uploader_asset(post) }}" alt="{{ post.imageName }}">
+                        <div class="card-body">
+                            <p class="card-text">{{ post.text }}</p>
+                            <b><p class="card-text">{{ post.user.prenom }}</p></b>
+
+
+                            {% if is_granted(['ROLE_SUPER_ADMIN']) %}
+                                <a href="{{ path('app_post_show', {'id': post.id}) }}">show</a>
+                                <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                </div>
+
+            {% endfor %}
+
+            <div class="card shadow" style="width: 18rem;">
+                <h1 class="mx-auto">Ajouter un truc</h1>
+                <a href="/post/add"> Ajouter</a>
+            </div>
+        </div>
+
+    </div>
+
+    <style>
+        .animate-charcter
+        {
+            text-transform: uppercase;
+            background-image: linear-gradient(
+                    -225deg,
+                    #231557 0%,
+                    #44107a 29%,
+                    #ff1361 67%,
+                    #fff800 100%
+            );
+            background-size: auto auto;
+            background-clip: border-box;
+            background-size: 200% auto;
+            color: #fff;
+            background-clip: text;
+            text-fill-color: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textclip 2s linear infinite;
+            display: inline-block;
+            font-size: 190px;
+        }
+
+        @keyframes textclip {
+            to {
+                background-position: 200% center;
+            }
+        }</style>
 {% endblock %}

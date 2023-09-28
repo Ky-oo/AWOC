@@ -5,8 +5,11 @@ namespace App\Entity;
 use App\Repository\PostRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
+#[Vich\Uploadable]
 class Post
 {
     #[ORM\Id]
@@ -27,6 +30,11 @@ class Post
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[Vich\UploadableField( mapping: 'posts', fileNameProperty: 'imageName')]
+    private ?File $imageFile = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $imageName = null;
 
     public function getId(): ?int
     {
@@ -77,6 +85,30 @@ class Post
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageFile(?File $imageFile): static
+    {
+        $this->imageFile = $imageFile;
+
+        return $this;
+    }
+
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
+    public function setImageName(?string $imageName): static
+    {
+        $this->imageName = $imageName;
 
         return $this;
     }
