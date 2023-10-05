@@ -19,6 +19,8 @@
 
         <button type="submit" class="btn btn-warning">Login</button>
 
+        <a href="{{ path('app_forgot_password_request') }}"> reset password</a>
+
         {% if error %}
             <center> <div class="fs-1"><div class="text-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div></div> </center>
 

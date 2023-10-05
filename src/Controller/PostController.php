@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use function PHPUnit\Framework\isNull;
 use function Symfony\Component\Clock\now;
 
 #[Route('/post')]
@@ -29,24 +30,65 @@ class PostController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
 
-        $post = new Post();
-        $timezone = new DateTimeZone('Europe/Paris'); // Replace 'YourDesiredTimeZone' with your desired timezone
-        $post->setDateTime(new \DateTime('now', $timezone));
-        $post->setUser($this->getUser());
-        $form = $this->createForm(PostType::class, $post);
-        $form->handleRequest($request);
+        $recentPost = null;
+        $currentDateTime = new \DateTime('now');
+        $delais = false;
+        $postDateTime = null;
+        $post = null;
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($post);
-            $entityManager->flush();
-            return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
+        $postsUser = $entityManager->getRepository(Post::class)->findBy(['user'=>$this->getUser()]);
+
+        foreach ($postsUser as $postByUser){
+
+            $postDateTime = $postByUser->getDateTime();
+
+            if ($recentPost === null || $postDateTime > $recentPost->getDateTime()) {
+                $recentPost = $postByUser;
+            }
+
         }
+
+        if(!isset($postDateTime)){
+
+            $postDateTime = new \DateTime('2001-01-01');
+        }
+
+        $interval = $currentDateTime->diff($postDateTime);
+        $daysDifference = $interval->format('%a');
+
+
+        if ($daysDifference > 7) {
+
+
+
+            $post = new Post();
+            $timezone = new DateTimeZone('Europe/Paris');
+            $post->setDateTime(new \DateTime('now', $timezone));
+            $post->setUser($this->getUser());
+            $form = $this->createForm(PostType::class, $post);
+            $form->handleRequest($request);
+
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $entityManager->persist($post);
+                    $entityManager->flush();
+                    return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
+            }
+
+        } else {
+            $delais = true;
+        }
+
+
 
         return $this->render('post/new.html.twig', [
             'post' => $post,
-            'form' => $form,
-        ]);
-    }
+            'delais' => $delais,
+            'form' => $form ?? null,
+
+        ]);}
+
+
+
 
     #[Route('/{id}', name: 'app_post_show', methods: ['GET'])]
     public function show(Post $post): Response

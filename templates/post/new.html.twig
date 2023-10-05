@@ -3,11 +3,28 @@
 {% block title %}New Post{% endblock %}
 
 {% block body %}
-    <h1>Create new Post</h1>
-<div class="card shadow" style="width: 18rem;">
-    {{ include('post/_form.html.twig') }}
 
-    </div>
+{% if post is not null %}
+        {% if post is not null %}
+            <h1>Create new Post</h1>
+            <div class="card shadow" style="width: 18rem;">
+                {{ include('post/_form.html.twig') }}
+            </div>
+
+        {% else %}
+
+
+
+            <div class="testtest"><h1> Vous avez déjà fait votre post de la semaine</h1></div>
+
+
+
+
+    {% endif %}
+
+    {% else %}
+    <div class="testtest"><h1> Vous avez déjà fait votre post de la semaine</h1></div>
+{% endif%}
 
 
 
