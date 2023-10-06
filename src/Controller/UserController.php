@@ -9,7 +9,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use function Sodium\add;
 
 #[Route('/user')]
 class UserController extends AbstractController
@@ -23,7 +25,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(UserPasswordHasherInterface $passwordHasher, Request $request, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -32,6 +34,28 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
 
+            $hashedPassword = $passwordHasher->hashPassword(
+                $user,
+                $user->getPassword()
+            );
+
+            $user->setPassword($hashedPassword);
+            $acutalPass = $user->getPassword();
+            $passList = $user->getListAncienMdp();
+
+            if(strlen($passList) >= 5){
+
+             array_pop($passList);
+
+            }
+
+
+
+
+
+            $user->ListAncienMdp([$acutalPass]);
+
+            dd($user);
 
             $entityManager->persist($user);
             $entityManager->flush();

@@ -5,9 +5,11 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use function Sodium\add;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -37,6 +39,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
+
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private ?array $listAncienMdp = null;
 
     public function __construct()
     {
@@ -165,6 +170,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->nom = $nom;
 
         return $this;
+    }
+
+    public function getListAncienMdp(): ?array
+    {
+        return $this->listAncienMdp;
+    }
+
+    public function setListAncienMdp(?array $listAncienMdp): static
+    {
+        $this->listAncienMdp = $listAncienMdp;
+
+        return $this;
+    }
+
+    public function addListAncienMdp(string $actualMDP): void
+    {
+        $this->getListAncienMdp().add($actualMDP);
+
     }
 
 }
