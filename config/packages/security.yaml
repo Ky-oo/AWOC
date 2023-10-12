@@ -13,6 +13,8 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+
         main:
             lazy: true
             provider: app_user_provider
@@ -39,8 +41,8 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
          - { path: ^/post, roles: ROLE_USER }
-         - { path: ^/post/edit, roles: ROLE_ADMIN }
          - { path: ^/user, roles: ROLE_SUPER_ADMIN }
+         - { path: ^/role, roles: ROLE_SUPER_ADMIN }
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER

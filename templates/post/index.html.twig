@@ -7,6 +7,46 @@
 
     <div class="container text-left">
         <div class="row">
+
+            {% if delais == false %}
+            <div class="card shadow" style="width: 18rem;">
+                <h1 class="mx-auto">Ajouter votre post de la semaine</h1>
+                <a href="{{ path('app_post_new') }}"> Ajouter</a>
+            </div>
+
+                {% for post in posts %}
+
+                    <div class="col-md-4">
+                        <div class="card shadow" style="width: 18rem;">
+                            <div class="blur">
+                            <p>{{ post.dateTime ? post.dateTime|date('m-d H:i') : '' }}</p>
+
+                            <center><h5 class="card-title">{{ post.title }}</h5></center>
+                            <img src="{{ vich_uploader_asset(post) }}" alt="{{ post.imageName }}">
+                            <div class="card-body">
+                                <p class="card-text">{{ post.text }}</p>
+                                <b><p class="card-text">{{ post.user.prenom }}</p></b>
+
+
+                                {% if is_granted('ROLE_ADMIN') or user.id == post.user.id  %}
+                                    <a href="{{ path('app_post_show', {'id': post.id}) }}" disabled>show</a>
+                                    <a href="{{ path('app_post_edit', {'id': post.id}) }}" disabled>edit</a>
+                                {% endif %}
+
+                            </div>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                    </div>
+                    </div>
+
+                {% endfor %}
+
+
+            {% else %}
+
+
             {% for post in posts %}
                 <div class="col-md-4">
                     <div class="card shadow" style="width: 18rem;">
@@ -19,7 +59,7 @@
                             <b><p class="card-text">{{ post.user.prenom }}</p></b>
 
 
-                            {% if is_granted(['ROLE_SUPER_ADMIN']) %}
+                            {% if is_granted('ROLE_ADMIN') or user.id == post.user.id  %}
                                 <a href="{{ path('app_post_show', {'id': post.id}) }}">show</a>
                                 <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
                             {% endif %}
@@ -31,16 +71,17 @@
                 </div>
 
             {% endfor %}
+            {% endif %}
 
-            <div class="card shadow" style="width: 18rem;">
-                <h1 class="mx-auto">Ajouter un truc</h1>
-                <a href="/post/add"> Ajouter</a>
-            </div>
+
         </div>
 
     </div>
 
     <style>
+        .blur{
+            filter:  blur(4px);;
+        }
         .animate-charcter
         {
             text-transform: uppercase;

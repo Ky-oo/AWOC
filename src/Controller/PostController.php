@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Entity\User;
 use App\Form\PostType;
 use App\Repository\PostRepository;
+use App\Repository\UserRepository;
 use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,16 +20,53 @@ use function Symfony\Component\Clock\now;
 class PostController extends AbstractController
 {
     #[Route('/', name: 'app_post_index', methods: ['GET'])]
-    public function index(PostRepository $postRepository): Response
+    public function index(PostRepository $postRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
+
+       $user = $this->getUser();
+
+        $recentPost = null;
+        $currentDateTime = new \DateTime('now');
+        $postDateTime = null;
+        $postsUser = $entityManager->getRepository(Post::class)->findBy(['user'=>$this->getUser()]);
+
+        foreach ($postsUser as $postByUser){
+
+            $postDateTime = $postByUser->getDateTime();
+
+            if ($recentPost === null || $postDateTime > $recentPost->getDateTime()) {
+                $recentPost = $postByUser;
+            }
+
+        }
+
+        if(!isset($postDateTime)){
+
+            $postDateTime = new \DateTime('2001-01-01');
+        }
+
+        $interval = $currentDateTime->diff($postDateTime);
+        $daysDifference = $interval->format('%a');
+
+
+        if ($daysDifference > 7) {
+
+            $delais = false;
+
+        } else {
+            $delais = true;
+        }
+
 
         return $this->render('post/index.html.twig', [
             'posts' => $postRepository->findAll(),
+            'user' => $user,
+            'delais' => $delais
         ]);
     }
 
     #[Route('/new', name: 'app_post_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, PostRepository $postRepository): Response
     {
 
         $recentPost = null;
@@ -82,9 +121,8 @@ class PostController extends AbstractController
 
         return $this->render('post/new.html.twig', [
             'post' => $post,
-            'delais' => $delais,
             'form' => $form ?? null,
-
+            'posts' => $postRepository->findAll(),
         ]);}
 
 

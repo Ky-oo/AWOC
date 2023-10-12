@@ -4,29 +4,28 @@
 
 {% block body %}
 
-{% if post is not null %}
-        {% if post is not null %}
-            <h1>Create new Post</h1>
-            <div class="card shadow" style="width: 18rem;">
-                {{ include('post/_form.html.twig') }}
+
+
+        {% if post is not null  %}
+
+            <div class="container mt-5">
+                <div class="card mx-auto" style="max-width: 400px;">
+                    <div class="card-body">
+                        <h1 class="text-center">Créer un Post</h1>
+                        <h1 class="text-center">Créer un Post</h1>
+                        {{ include('post/_form.html.twig') }}
+                    </div>
+                    <a href="{{ path('app_post_index') }}" class="btn btn-secondary mt-3">Back to List</a>
+
+                </div>
             </div>
 
         {% else %}
 
-
-
             <div class="testtest"><h1> Vous avez déjà fait votre post de la semaine</h1></div>
-
-
-
 
     {% endif %}
 
-    {% else %}
-    <div class="testtest"><h1> Vous avez déjà fait votre post de la semaine</h1></div>
-{% endif%}
 
 
-
-    <a href="{{ path('app_post_index') }}">back to list</a>
 {% endblock %}
