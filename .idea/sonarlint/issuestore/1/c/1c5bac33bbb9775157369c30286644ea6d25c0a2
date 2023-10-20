@@ -1,0 +1,7 @@
+
+ephp:S103N"KSplit this 153 characters long line (which is greater than 120 authorized).(–øÉ>8³÷°È²1
+kphp:S103b"KSplit this 121 characters long line (which is greater than 120 authorized).(À—®ûÿÿÿÿ8³÷°È²1
+fphp:S103"KSplit this 155 characters long line (which is greater than 120 authorized).(õÅŸA8³÷°È²1
+gphp:S103¡"KSplit this 122 characters long line (which is greater than 120 authorized).(È¼ø€8³÷°È²1
+W	php:S1142N"<This method has 4 returns, which is more than the 3 allowed.(–øÉ>8³÷°È²1
+O	php:S1172"3Remove the unused function parameter "$translator".(õÅŸA8³÷°È²1

@@ -115,6 +115,14 @@ class ResetPasswordController extends AbstractController
                 $user,
                 $form->get('plainPassword')->getData()
             );
+            $actualPass = $user->getPassword();
+            $user->setListAncienMdp($user->addListAncienMdp($actualPass));
+
+            foreach ($actualPass as $pass){
+                if($pass == $encodedPassword){
+                    break;
+                }
+            }
 
             $user->setPassword($encodedPassword);
             $this->entityManager->flush();
@@ -122,7 +130,7 @@ class ResetPasswordController extends AbstractController
             // The session is cleaned up after the password has been changed.
             $this->cleanSessionAfterReset();
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_acceuil');
         }
 
         return $this->render('reset_password/reset.html.twig', [

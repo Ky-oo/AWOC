@@ -40,17 +40,6 @@ class UserController extends AbstractController
             );
 
             $user->setPassword($hashedPassword);
-            $acutalPass = $user->getPassword();
-            $passList = $user->getListAncienMdp();
-
-            if(strlen($passList) >= 5){
-
-             array_pop($passList);
-
-            }
-
-
-
 
 
             $user->ListAncienMdp([$acutalPass]);

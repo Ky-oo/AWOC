@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Archive;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\PostType;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
+use DateInterval;
 use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,7 +30,40 @@ class PostController extends AbstractController
         $recentPost = null;
         $currentDateTime = new \DateTime('now');
         $postDateTime = null;
+        $posts = $postRepository->findAll();
         $postsUser = $entityManager->getRepository(Post::class)->findBy(['user'=>$this->getUser()]);
+
+        $archivedPost = $entityManager->getRepository(Archive::class)->findAll();
+        foreach ($posts as $post) {
+            $posteDateTime = $post->getDateTime();
+            $currentDateTime = new \DateTime();
+            $sevenDaysAgo = (new \DateTime())->sub(new DateInterval('P7D'));
+
+            if ($posteDateTime < $sevenDaysAgo) {
+
+
+                if($archivedPost != null){
+                    foreach ($archivedPost as $archive){
+
+                        if($archive != $post){
+                            $archive = new Archive();
+
+                            $archive->setPost($post);
+                            $entityManager->persist($archive);
+                            $entityManager->flush();
+                        }
+                    }
+                } else {
+
+                    $archive = new Archive();
+                    $archive->setPost($post);
+                    $entityManager->persist($archive);
+                    $entityManager->remove($post);
+                    $entityManager->flush();
+                    $entityManager->flush($this);
+                }
+            }
+
 
         foreach ($postsUser as $postByUser){
 
@@ -56,13 +91,12 @@ class PostController extends AbstractController
         } else {
             $delais = true;
         }
-
-
         return $this->render('post/index.html.twig', [
-            'posts' => $postRepository->findAll(),
+            'posts' => $posts,
             'user' => $user,
             'delais' => $delais
         ]);
+    }
     }
 
     #[Route('/new', name: 'app_post_new', methods: ['GET', 'POST'])]
@@ -71,7 +105,6 @@ class PostController extends AbstractController
 
         $recentPost = null;
         $currentDateTime = new \DateTime('now');
-        $delais = false;
         $postDateTime = null;
         $post = null;
 
@@ -113,8 +146,6 @@ class PostController extends AbstractController
                     return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
             }
 
-        } else {
-            $delais = true;
         }
 
 
@@ -123,10 +154,8 @@ class PostController extends AbstractController
             'post' => $post,
             'form' => $form ?? null,
             'posts' => $postRepository->findAll(),
-        ]);}
-
-
-
+        ]);
+    }
 
     #[Route('/{id}', name: 'app_post_show', methods: ['GET'])]
     public function show(Post $post): Response

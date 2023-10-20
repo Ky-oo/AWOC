@@ -17,8 +17,7 @@ class PostType extends AbstractType
     {
         $builder
             ->add('title', TextType::class,[
-                'label' => 'Titre de votre Post‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ 
-                ',
+                'label' => 'Titre de votre Post‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ',
             ])
             ->add('text', TextType::class,[
                 'label' => 'Description de votre Post',

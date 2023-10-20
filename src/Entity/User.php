@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use PhpParser\Node\Expr\Array_;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use function Sodium\add;
@@ -121,6 +122,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Post>
      */
+
     public function getPosts(): Collection
     {
         return $this->posts;
@@ -184,10 +186,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function addListAncienMdp(string $actualMDP): void
+    public function addListAncienMdp(string $actualMDP): ?array
     {
-        $this->getListAncienMdp().add($actualMDP);
-
+        $list = $this->getListAncienMdp();
+        if(count($list) >= 5){
+            array_pop($list);
+        }
+        $list[]=$actualMDP;
+        return $list;
     }
 
 }
