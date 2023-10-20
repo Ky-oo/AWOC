@@ -186,14 +186,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function addListAncienMdp(string $actualMDP): ?array
+    public function addListAncienMdp(string $actualMDP): void
     {
-        $list = $this->getListAncienMdp();
-        if(count($list) >= 5){
-            array_pop($list);
-        }
-        $list[]=$actualMDP;
-        return $list;
+        $this->getListAncienMdp().add($actualMDP);
+
     }
 
 }

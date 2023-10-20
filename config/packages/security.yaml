@@ -34,7 +34,7 @@ security:
 
             login_throttling:
                 max_attempts: 3
-                interval: '5 minutes'
+                interval: '1 minutes'
 
 
     # Easy way to control access for large sections of your site

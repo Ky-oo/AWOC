@@ -13,7 +13,7 @@ class Archive
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Post $Post = null;
 
     public function getId(): ?int
@@ -26,7 +26,7 @@ class Archive
         return $this->Post;
     }
 
-    public function setPost(Post $Post): static
+    public function setPost(?Post $Post): static
     {
         $this->Post = $Post;
 

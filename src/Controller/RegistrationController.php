@@ -18,11 +18,11 @@ class RegistrationController extends AbstractController
 
         $user = new User();
 
-        $user->setEmail("supAdmin@awok.fr");
-        $plaintextPassword = "AwokSupAdmin2023";
-        $user->setRoles( [ "ROLE_SUPER_ADMIN" ]);
+        $user->setEmail("kylian.patry@gmail.com");
+            $plaintextPassword = "patpat";
+        $user->setRoles( [ "ROLE_USER" ]);
         $user->setNom('Patry');
-        $user->setPrenom('Kylian');
+        $user->setPrenom('Julien');
 
         $hashedPassword = $passwordHasher->hashPassword(
             $user,

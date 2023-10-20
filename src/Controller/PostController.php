@@ -24,9 +24,7 @@ class PostController extends AbstractController
     #[Route('/', name: 'app_post_index', methods: ['GET'])]
     public function index(PostRepository $postRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
-
        $user = $this->getUser();
-
         $recentPost = null;
         $currentDateTime = new \DateTime('now');
         $postDateTime = null;
@@ -36,33 +34,33 @@ class PostController extends AbstractController
         $archivedPost = $entityManager->getRepository(Archive::class)->findAll();
         foreach ($posts as $post) {
             $posteDateTime = $post->getDateTime();
-            $currentDateTime = new \DateTime();
             $sevenDaysAgo = (new \DateTime())->sub(new DateInterval('P7D'));
 
             if ($posteDateTime < $sevenDaysAgo) {
+                if ($archivedPost != []) {
 
-
-                if($archivedPost != null){
-                    foreach ($archivedPost as $archive){
-
-                        if($archive != $post){
-                            $archive = new Archive();
-
-                            $archive->setPost($post);
-                            $entityManager->persist($archive);
-                            $entityManager->flush();
-                        }
+                    foreach ($archivedPost as $archives) {
+                    if ($post->getId() != $archives->getPost()->getId()) {
+                        $archive = new Archive();
+                        $archive->setPost($post);
+                        $post->setIsArchived(true);
+                        $entityManager->persist($archive);
+                        $entityManager->persist($post);
+                        $entityManager->flush();
                     }
-                } else {
+                }
+            } else {
 
                     $archive = new Archive();
                     $archive->setPost($post);
+                    $post->setIsArchived(true);
                     $entityManager->persist($archive);
-                    $entityManager->remove($post);
+                    $entityManager->persist($post);
                     $entityManager->flush();
-                    $entityManager->flush($this);
+
                 }
             }
+        }
 
 
         foreach ($postsUser as $postByUser){
@@ -91,12 +89,12 @@ class PostController extends AbstractController
         } else {
             $delais = true;
         }
+
         return $this->render('post/index.html.twig', [
             'posts' => $posts,
             'user' => $user,
             'delais' => $delais
         ]);
-    }
     }
 
     #[Route('/new', name: 'app_post_new', methods: ['GET', 'POST'])]
@@ -141,6 +139,7 @@ class PostController extends AbstractController
             $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
+                    $post->setIsArchived(false);
                     $entityManager->persist($post);
                     $entityManager->flush();
                     return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
