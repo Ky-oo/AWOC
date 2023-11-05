@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -38,7 +39,15 @@ class UserType extends AbstractType
     ],])
             ->add('prenom',TextType::class)
             ->add('nom',TextType::class)
-        ;
+            ->add('roles', ChoiceType::class, [
+                'choices' => [
+                    'Admin' => 'ROLE_ADMIN',
+                    'Super Admin' => 'ROLE_SUPER_ADMIN',
+                    'User' => 'ROLE_USER',
+                ],
+                'multiple' => true, // Si l'utilisateur peut avoir plusieurs rôles
+                'expanded' => false, // Pour afficher les rôles sous forme de cases à cocher
+            ]);        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

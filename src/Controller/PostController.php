@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Archive;
+use App\Entity\Like;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\PostType;
+use App\Repository\LikeRepository;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use DateInterval;
@@ -22,7 +24,7 @@ use function Symfony\Component\Clock\now;
 class PostController extends AbstractController
 {
     #[Route('/', name: 'app_post_index', methods: ['GET'])]
-    public function index(PostRepository $postRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function index(PostRepository $postRepository, Request $request, EntityManagerInterface $entityManager, LikeRepository $likeRepository): Response
     {
        $user = $this->getUser();
         $recentPost = null;
@@ -30,36 +32,39 @@ class PostController extends AbstractController
         $postDateTime = null;
         $posts = $postRepository->findAll();
         $postsUser = $entityManager->getRepository(Post::class)->findBy(['user'=>$this->getUser()]);
+        $like = null;
+        $didUserLike = false;
 
         $archivedPost = $entityManager->getRepository(Archive::class)->findAll();
-        foreach ($posts as $post) {
-            $posteDateTime = $post->getDateTime();
+        foreach ($posts as $poste) {
+            $posteDateTime = $poste->getDateTime();
             $sevenDaysAgo = (new \DateTime())->sub(new DateInterval('P7D'));
 
             if ($posteDateTime < $sevenDaysAgo) {
                 if ($archivedPost != []) {
 
                     foreach ($archivedPost as $archives) {
-                    if ($post->getId() != $archives->getPost()->getId()) {
+                    if ($poste->getId() != $archives->getPost()->getId()) {
                         $archive = new Archive();
-                        $archive->setPost($post);
-                        $post->setIsArchived(true);
+                        $archive->setPost($poste);
+                        $poste->setIsArchived(true);
                         $entityManager->persist($archive);
-                        $entityManager->persist($post);
+                        $entityManager->persist($poste);
                         $entityManager->flush();
                     }
                 }
             } else {
 
                     $archive = new Archive();
-                    $archive->setPost($post);
-                    $post->setIsArchived(true);
+                    $archive->setPost($poste);
+                    $poste->setIsArchived(true);
                     $entityManager->persist($archive);
-                    $entityManager->persist($post);
+                    $entityManager->persist($poste);
                     $entityManager->flush();
 
                 }
             }
+
         }
 
 
@@ -93,7 +98,9 @@ class PostController extends AbstractController
         return $this->render('post/index.html.twig', [
             'posts' => $posts,
             'user' => $user,
-            'delais' => $delais
+            'delais' => $delais,
+            'like' => $like,
+            'didUserLike' => $didUserLike,
         ]);
     }
 
@@ -105,6 +112,7 @@ class PostController extends AbstractController
         $currentDateTime = new \DateTime('now');
         $postDateTime = null;
         $post = null;
+        $roleUser = false;
 
         $postsUser = $entityManager->getRepository(Post::class)->findBy(['user'=>$this->getUser()]);
 
@@ -129,8 +137,6 @@ class PostController extends AbstractController
 
         if ($daysDifference > 7) {
 
-
-
             $post = new Post();
             $timezone = new DateTimeZone('Europe/Paris');
             $post->setDateTime(new \DateTime('now', $timezone));
@@ -149,10 +155,33 @@ class PostController extends AbstractController
 
 
 
+        foreach ($this->getUser()->getRoles() as $role){
+            if($role == 'ROLE_SUPER_ADMIN'){
+                $roleUser = true;
+                $post = new Post();
+                $timezone = new DateTimeZone('Europe/Paris');
+                $post->setDateTime(new \DateTime('now', $timezone));
+                $post->setUser($this->getUser());
+                $form = $this->createForm(PostType::class, $post);
+                $form->handleRequest($request);
+
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $post->setIsArchived(false);
+                    $entityManager->persist($post);
+                    $entityManager->flush();
+                    return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
+                }
+            }
+        }
+
+        $test = true;
+
         return $this->render('post/new.html.twig', [
             'post' => $post,
             'form' => $form ?? null,
             'posts' => $postRepository->findAll(),
+            'user' => $roleUser,
+            'test' => $test,
         ]);
     }
 
@@ -192,4 +221,31 @@ class PostController extends AbstractController
 
         return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/post/like/{id}', name: 'like_post', methods: ['POST'])]
+    public function like(LikeRepository $likeRepository, Post $post, EntityManagerInterface $entityManager): Response
+    {
+        $allLike = $likeRepository->findBy(['user' => $this->getUser()->getId(), 'post' => $post->getId()]);
+        if($allLike == null){
+            $like = new Like();
+            $like->setUser($this->getUser());
+            $like->setPost($post);
+
+            $entityManager->persist($like);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/post/unlike/{id}', name: 'unlike_post', methods: ['POST'])]
+    public function unlike(LikeRepository $likeRepository, Post $post, EntityManagerInterface $entityManager): Response
+    {
+
+        $entityManager->remove($likeRepository->findOneBy(['user' => $this->getUser()->getId(), 'post' => $post->getId()]));
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
+    }
+
 }

@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use function Sodium\add;
 
 #[Route('/user')]
 class UserController extends AbstractController
@@ -42,9 +41,8 @@ class UserController extends AbstractController
             $user->setPassword($hashedPassword);
 
 
-            $user->ListAncienMdp([$acutalPass]);
-
-            dd($user);
+            $user->addListAncienMdp($passwordHasher->hashPassword($user, $form->get('password')->getData()));
+            $user->setRoles($form->get('roles')->getData());
 
             $entityManager->persist($user);
             $entityManager->flush();

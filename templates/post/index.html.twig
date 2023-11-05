@@ -3,7 +3,7 @@
 {% block title %}Post index{% endblock %}
 
 {% block body %}
-    <h1 class="animate-charcter"><center>Posts index</center></h1>
+    <h1 class="animate-character"><center>Posts index</center></h1>
 
     <div class="container text-left">
         <div class="row">
@@ -14,42 +14,11 @@
                 <a href="{{ path('app_post_new') }}"> Ajouter</a>
             </div>
 
-                {% for post in posts %}
-                    {% if post.isArchived == 0 %}
-                    <div class="col-md-4">
-                        <div class="card shadow" style="width: 18rem;">
-                            <div class="blur">
-                            <p>{{ post.dateTime ? post.dateTime|date('m-d H:i') : '' }}</p>
-
-                            <center><h5 class="card-title">{{ post.title }}</h5></center>
-                            <img src="{{ vich_uploader_asset(post) }}" alt="{{ post.imageName }}">
-                            <div class="card-body">
-                                <p class="card-text">{{ post.text }}</p>
-                                <b><p class="card-text">{{ post.user.prenom }}</p></b>
-
-                                {% if is_granted('ROLE_ADMIN') or user.id == post.user.id  %}
-                                    <a href="{{ path('app_post_show', {'id': post.id}) }}" disabled>show</a>
-                                    <a href="{{ path('app_post_edit', {'id': post.id}) }}" disabled>edit</a>
-                                {% endif %}
-
-                            </div>
-                            </div>
-                        </div>
-                        <br>
-                        <br>
-                    </div>
-                    </div>
-                    {% endif %}
-                {% endfor %}
-
-
-            {% else %}
-
-
             {% for post in posts %}
-                {% if post.isArchived == 0 %}
-                <div class="col-md-4">
-                    <div class="card shadow" style="width: 18rem;">
+            {% if post.isArchived == 0 %}
+            <div class="col-md-4">
+                <div class="card shadow" style="width: 18rem;">
+                    <div class="blur">
                         <p>{{ post.dateTime ? post.dateTime|date('m-d H:i') : '' }}</p>
 
                         <center><h5 class="card-title">{{ post.title }}</h5></center>
@@ -58,31 +27,71 @@
                             <p class="card-text">{{ post.text }}</p>
                             <b><p class="card-text">{{ post.user.prenom }}</p></b>
 
+                            <form method="post" action="{{ path('like_post', {'id': post.id}) }}">
+                                <button type="submit" class="btn btn-danger btn-like">
+                                    <i class="bi bi-bookmark-heart-fill"></i> Like
+                                </button>
+                            </form>
+
+
 
                             {% if is_granted('ROLE_ADMIN') or user.id == post.user.id  %}
-                                <a href="{{ path('app_post_show', {'id': post.id}) }}">show</a>
-                                <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
+                                <a href="{{ path('app_post_show', {'id': post.id}) }}" disabled>show</a>
+                                <a href="{{ path('app_post_edit', {'id': post.id}) }}" disabled>edit</a>
                             {% endif %}
+
 
                         </div>
                     </div>
-                    <br>
-                    <br>
                 </div>
+                <br>
+                <br>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        {% else %}
+            {% for post in posts %}
+                {% if post.isArchived == 0 %}
+                    <div class="col-md-4">
+                        <div class="card shadow" style="width: 18rem;">
+                            <p>{{ post.dateTime ? post.dateTime|date('m-d H:i') : '' }}</p>
+
+                            <center><h5 class="card-title">{{ post.title }}</h5></center>
+                            <img src="{{ vich_uploader_asset(post) }}" alt="{{ post.imageName }}">
+                            <div class="card-body">
+                                <p class="card-text">{{ post.text }}</p>
+                                <b><p class="card-text">{{ post.user.prenom }}</p></b>
+
+                                    <form method="post" action="{{ path('like_post', {'id': post.id}) }}">
+                                        <button type="submit" class="btn btn-danger btn-like">
+                                            <i class="bi bi-bookmark-heart-fill"></i> Like
+                                        </button>
+                                    </form>
+
+                                    <span class="likes-count">{{ like }}</span>
+
+                                {% if is_granted('ROLE_ADMIN') or user.id == post.user.id  %}
+                                    <a href="{{ path('app_post_show', {'id': post.id}) }}">show</a>
+                                    <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                    </div>
                 {% endif %}
             {% endfor %}
-            {% endif %}
-
-
-        </div>
-
+        {% endif %}
+    </div>
     </div>
 
     <style>
         .blur{
             filter:  blur(4px);;
         }
-        .animate-charcter
+        .animate-character
         {
             text-transform: uppercase;
             background-image: linear-gradient(
@@ -109,5 +118,6 @@
             to {
                 background-position: 200% center;
             }
-        }</style>
+        }
+    </style>
 {% endblock %}
