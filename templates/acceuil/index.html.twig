@@ -6,10 +6,10 @@
     <h1 class="animate-charcter"><center>AWOK</center></h1>
 
     <div class="container mt-5">
-        <div class="jumbotron">
-            <p class="lead">Le site pour les étudiants en BTS SIO de Gabriel Fauré.</p>
-            <hr class="my-4">
-            <p>Découvrez la possibilité de créer un poste par semaine avec une image, un titre et un texte captivant.</p>
+        <div class="jumbotron"><p class="lead" style="color: #000;">Le site pour les étudiants en BTS SIO de Gabriel Fauré.</p>
+            <hr style="color: #000">
+            <p style="color: #000;">Découvrez la possibilité de créer un poste par semaine avec une image, un titre et un texte captivant.</p>
+
 
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <a class="btn btn-primary btn-lg" href="/post" role="button">Voir les posts du jour !</a>
@@ -21,7 +21,7 @@
 
     <!-- Avis des élèves -->
     <div class="container">
-        <h2 class="text-center mb-4">Avis des élèves</h2>
+        <h2 class="text-center mb-4" style="color: #fff;">Avis des élèves</h2>
         <div class="row">
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card">
@@ -75,8 +75,7 @@
     </div>
 
     <style>
-        .animate-charcter
-        {
+        .animate-charcter {
             text-transform: uppercase;
             background-image: linear-gradient(
                     -225deg,
@@ -85,20 +84,18 @@
                     #ff1361 67%,
                     #fff800 100%
             );
-            background-size: auto auto;
-            background-clip: border-box;
             background-size: 200% auto;
             color: #fff;
             background-clip: text;
             text-fill-color: transparent;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: textclip 2s linear infinite;
+            animation: textclip 3s linear infinite, textcolor 6s linear alternate infinite;
             display: inline-block;
             font-size: 190px;
         }
 
-        .jumbotron{
+        .jumbotron {
             color: #ffffff;
         }
 
@@ -106,6 +103,14 @@
             to {
                 background-position: 200% center;
             }
-        }</style>
+        }
+
+        @keyframes textcolor {
+            to {
+                color: #ff4081; /* Changement de couleur pour plus de dynamisme */
+            }
+        }
+
+    </style>
 
 {% endblock %}

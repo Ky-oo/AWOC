@@ -14,29 +14,15 @@ class Like
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?User $user = null;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Post::class, inversedBy="likes", cascade={"persist", "remove"})
-     */
+    #[ORM\ManyToOne(inversedBy: 'liked')]
     private ?Post $post = null;
+
+    #[ORM\ManyToOne(inversedBy: 'liked')]
+    private ?User $user = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
-
-        return $this;
     }
 
     public function getPost(): ?Post
@@ -47,6 +33,18 @@ class Like
     public function setPost(?Post $post): static
     {
         $this->post = $post;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

@@ -44,9 +44,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::ARRAY, nullable: true)]
     private ?array $listAncienMdp = null;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Like::class)]
+    private Collection $liked;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
+        $this->liked = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -192,6 +196,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         $list[] = $actualMDP;
         $this->setListAncienMdp($list);
+    }
+
+    /**
+     * @return Collection<int, Like>
+     */
+    public function getLiked(): Collection
+    {
+        return $this->liked;
+    }
+
+    public function addLiked(Like $liked): static
+    {
+        if (!$this->liked->contains($liked)) {
+            $this->liked->add($liked);
+            $liked->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLiked(Like $liked): static
+    {
+        if ($this->liked->removeElement($liked)) {
+            // set the owning side to null (unless already changed)
+            if ($liked->getUser() === $this) {
+                $liked->setUser(null);
+            }
+        }
+
+        return $this;
     }
 
 }

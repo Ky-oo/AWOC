@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\LikeRepository;
 use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -43,12 +42,13 @@ class Post
     private ?bool $isArchived = null;
 
     #[ORM\OneToMany(mappedBy: 'post', targetEntity: Like::class)]
-    private Collection $likes;
+    private Collection $liked;
 
     public function __construct()
     {
-        $this->likes = new ArrayCollection();
+        $this->liked = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -142,31 +142,36 @@ class Post
     /**
      * @return Collection<int, Like>
      */
-    public function getLikes(): Collection
+    public function getLiked(): Collection
     {
-        return $this->likes;
+        return $this->liked;
     }
 
-    public function addLike(Like $like): static
+    public function addLiked(Like $liked): static
     {
-        if (!$this->likes->contains($like)) {
-            $this->likes->add($like);
-            $like->setPost($this);
+        if (!$this->liked->contains($liked)) {
+            $this->liked->add($liked);
+            $liked->setPost($this);
         }
 
         return $this;
     }
 
-    public function removeLike(Like $like): static
+    public function removeLiked(Like $liked): static
     {
-        if ($this->likes->removeElement($like)) {
-            // set the owning side to null (unless already changed)
-            if ($like->getPost() === $this) {
-                $like->setPost(null);
+        if ($this->liked->removeElement($liked)) {
+
+            if ($liked->getPost() === $this) {
+                $liked->setPost(null);
             }
         }
 
         return $this;
+    }
+
+    public function countLike(): int
+    {
+        return count($this->getLiked());
     }
 
 }
